@@ -8,113 +8,111 @@ public class ChanmomoLipSync : MonoBehaviour
     private KeyboardVisibleController _VisibleController;
 
 	[SerializeField]
-    private KeyCode[] _Keys = new KeyCode[OVRLipSync.VisemeCount];
+    private KeyCode[] _Keys = new KeyCode[5];
 
-	[SerializeField]
-    [Range(1, 100)]
-    private int smoothAmount = 70;
+    [Tooltip("aa, E, ih, oh, ou のそれぞれの音素へ遷移する際に、BlendShapeの重みを時間をかけて変化させるためのカーブ")]
+    public AnimationCurve[] transitionCurves = new AnimationCurve[5];
 
-    // PRIVATE
+    [Tooltip("カーブの値をBlendShapeに適用する際の倍率")]
+    public float curveAmplifier = 100.0f;
 
-    // Look for a Phoneme Context (should be set at the same level as this component)
-    private OVRLipSyncContextBase lipsyncContext = null;
+    [Range(0.0f, 100.0f), Tooltip("この閾値未満の音素の重みは無視する")]
+    public float weightThreashold = 2.0f;
 
-    // Capture the old viseme frame (we will write back into this one)
-    private OVRLipSync.Frame oldFrame = new OVRLipSync.Frame();
+    [Tooltip("BlendShapeの重みを変化させるフレームレート")]
+    public float frameRate = 12.0f;
 
-    void Start()
+    [Tooltip("aa, E, ih, oh, ouの順で割り当てるBlendShapeのindex")]
+    public int[] visemeToBlendShape = new int[5];
+
+    [Tooltip("OVRLipSyncに渡すSmoothing amountの値")]
+    public int smoothAmount = 100;
+
+    [Tooltip("Eの倍率")]
+    public float eRate = 1.0f;
+
+
+    OVRLipSyncContextBase context;
+    OVRLipSync.Viseme previousViseme = OVRLipSync.Viseme.sil;
+    float transitionTimer = 0.0f;
+    float frameRateTimer = 0.0f;
+
+    void Start() 
     {
-        // make sure there is a phoneme context assigned to this object
-        lipsyncContext = GetComponent<OVRLipSyncContextBase>();
-        if (lipsyncContext == null)
+        context = GetComponent<OVRLipSyncContextBase>();
+        if (context == null) 
         {
-            Debug.LogWarning("LipSyncContextTextureFlip.Start WARNING:" +
-                " No lip sync context component set to object");
+            Debug.LogError("同じGameObjectにOVRLipSyncContextBaseを継承したクラスが見つかりません。", this);
         }
-        else
-        {
-            // Send smoothing amount to context
-            lipsyncContext.Smoothing = smoothAmount;
-        }
+
+        context.Smoothing = smoothAmount;
     }
 
-    void Update ()
+    void Update() 
     {
-        if((lipsyncContext != null))
-        {
-            // trap inputs and send signals to phoneme engine for testing purposes
-
-            // get the current viseme frame
-            OVRLipSync.Frame frame = lipsyncContext.GetCurrentPhonemeFrame();
-            if (frame != null)
-            {
-                // Perform smoothing here if on original provider
-                if (lipsyncContext.provider == OVRLipSync.ContextProviders.Original)
-                {
-                    // Go through the current and old
-                    for (int i = 0; i < frame.Visemes.Length; i++)
-                    {
-                        // Convert 1-100 to old * (0.00 - 0.99)
-                        float smoothing = ((smoothAmount - 1) / 100.0f);
-                        oldFrame.Visemes[i] =
-                            oldFrame.Visemes[i] * smoothing +
-                            frame.Visemes[i] * (1.0f - smoothing);
-                    }
-                }
-                else
-                {
-                    oldFrame.Visemes = frame.Visemes;
-                }
-
-                SetVisemeToTexture();
-            }
-        }
-
-        // Update smoothing value in context
-        if (smoothAmount != lipsyncContext.Smoothing)
-        {
-            lipsyncContext.Smoothing = smoothAmount;
-        }
-    }
-
-    void SetVisemeToTexture()
-    {
-        if(!_VisibleController)
+        if (context == null) 
         {
             return;
         }
 
-        foreach(KeyCode removeKey in _Keys)
-        {
-            _VisibleController.RemovePushKey(removeKey);
+        var frame = context.GetCurrentPhonemeFrame();
+        if (frame == null) {
+            return;
         }
 
+        transitionTimer += Time.deltaTime;
 
-        // This setting will run through all the Visemes, find the
-        // one with the greatest amplitude and set it to max value.
-        // all other visemes will be set to zero.
-        int   gV = -1;
-        float gA = 0.0f;
+        // 設定したフレームレートへUpdate関数を低下させる
+        frameRateTimer += Time.deltaTime;
+        if (frameRateTimer < 1.0f / frameRate) {
+            return;
+        }
+        frameRateTimer -= 1.0f / frameRate;
 
-        for (int i = 10; i < oldFrame.Visemes.Length; i++)
+        foreach(var key in _Keys)
         {
-            float viseme = oldFrame.Visemes[i];
-            if(i == 11)
+            if(_VisibleController)
             {
-                viseme = (oldFrame.Visemes[i] + oldFrame.Visemes[i + 1]) / 3.0f;
-            }
-            if(viseme > gA)
-            {
-                gV = i;
-                gA = oldFrame.Visemes[i];
+                _VisibleController.RemovePushKey(key);
             }
         }
 
-        if ((gV != -1) && (gV < _Keys.Length))
-        {
-            KeyCode key = _Keys[gV];
+        // 最大の重みを持つ音素を探す
+        var maxVisemeIndex = 0;
+        var maxVisemeWeight = 0.0f;
+        // 子音は無視する
+        for (var i = (int)OVRLipSync.Viseme.aa; i < frame.Visemes.Length; i++) {
+            var weight = frame.Visemes[i];
+            if(i == (int)OVRLipSync.Viseme.E)
+            {
+                weight *= eRate;
+            }
+            //Debug.Log((OVRLipSync.Viseme)i + " = " + weight);
+            if (weight > maxVisemeWeight) {
+                maxVisemeWeight = weight;
+                maxVisemeIndex = i;
+            }
+        }
 
-            _VisibleController.AddPushKey(key);
+        // 音素の重みが小さすぎる場合は口を閉じる
+        if (maxVisemeWeight * 100.0f < weightThreashold) {
+            transitionTimer = 0.0f;
+            return;
+        }
+
+        // 音素の切り替わりでタイマーをリセットする
+        if (previousViseme != (OVRLipSync.Viseme)maxVisemeIndex) {
+            transitionTimer = 0.0f;
+            previousViseme = (OVRLipSync.Viseme)maxVisemeIndex;
+        }
+
+        var visemeIndex = maxVisemeIndex - (int)OVRLipSync.Viseme.aa;
+        if(visemeIndex >= 0 && visemeIndex < _Keys.Length)
+        {
+            if(_VisibleController)
+            {
+                _VisibleController.AddPushKey(_Keys[visemeIndex]);
+            }
         }
     }
 }

@@ -105,6 +105,11 @@ public class KeyboardVisibleController : MonoBehaviour
 			return;
 		}
 
+		if(Input.GetKey(key))
+		{
+			return;
+		}
+
 		_PushKeys.Remove(key);
 		CheckKey();
 	}
