@@ -66,6 +66,15 @@ public class KeyboardVisibleController : MonoBehaviour
 		{
 			SetDefaultVisible(false);
 			var pushKey = _PushKeys[_PushKeys.Count - 1];
+			for(int i = _PushKeys.Count - 1; i >= 0; i--)
+			{
+				if(IsPrimaryKey(_PushKeys[i]))
+				{
+					pushKey = _PushKeys[i];
+					break;
+				}
+			}
+
 			foreach(var key in _Map.Keys)
 			{
 				foreach(var visible in _Map[key])
@@ -74,6 +83,20 @@ public class KeyboardVisibleController : MonoBehaviour
 				}
 			}
 		}
+	}
+
+	bool IsPrimaryKey(KeyCode key)
+	{
+		return key == KeyCode.Alpha0 
+			|| key == KeyCode.Alpha1
+			|| key == KeyCode.Alpha2
+			|| key == KeyCode.Alpha3
+			|| key == KeyCode.Alpha4
+			|| key == KeyCode.Alpha5
+			|| key == KeyCode.Alpha6
+			|| key == KeyCode.Alpha7
+			|| key == KeyCode.Alpha8
+			|| key == KeyCode.Alpha9;
 	}
 
 	void SetDefaultVisible(bool visible)
