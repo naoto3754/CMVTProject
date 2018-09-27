@@ -180,7 +180,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 7e83b9ce5918249528955fbaa351cfd9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4ab0b77fea9b24bd884d50625dd75da4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -788,7 +788,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: ad4bef2aa78354117bc031a69e5c2401, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4ab0b77fea9b24bd884d50625dd75da4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1426,7 +1426,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 04ba9296c9bbd47a4b5d78d4ece118f9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4ab0b77fea9b24bd884d50625dd75da4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1809,7 +1809,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 75dae89e44eb240f1aea13850ccca8cc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4ab0b77fea9b24bd884d50625dd75da4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1840,7 +1840,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1524502074
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1870,7 +1870,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04e6d3dd74c9e48c5a029f7b1e73edd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ActiveKey: 52
+  _ActiveKey: 50
 --- !u!114 &1524502076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2070,7 +2070,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2138455419
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2100,7 +2100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04e6d3dd74c9e48c5a029f7b1e73edd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ActiveKey: 53
+  _ActiveKey: 49
 --- !u!114 &2138455421
 MonoBehaviour:
   m_ObjectHideFlags: 0
