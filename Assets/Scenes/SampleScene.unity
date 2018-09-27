@@ -206,7 +206,7 @@ GameObject:
   - component: {fileID: 107495786}
   - component: {fileID: 107495785}
   m_Layer: 5
-  m_Name: Blueback
+  m_Name: Yellowback
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1250,7 +1250,7 @@ MonoBehaviour:
   frameRate: 60
   visemeToBlendShape: 0a0000000b0000000c0000000d0000000e000000
   smoothAmount: 100
-  eRate: 100000
+  eRate: 4.5
 --- !u!114 &833367355
 MonoBehaviour:
   m_ObjectHideFlags: 0
